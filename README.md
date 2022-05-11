@@ -11,15 +11,21 @@ Machine learning is a reasonable approach because this can be seen as a classifi
 
 Our model will be classifying 88 pitches from pitch 21 to pitch 108 of the MIDI standard from isolated samples of notes. 
 
+---
+
 ## Background 
 Music consists of 12 distinct pitch classes(A A# B C C# D D# E F F# G G#) that are separated by their frequencies. 
 
 For example, the frequency of an A4 note is 440 Hz. However, there are many A notes, such as A5 note at 880 Hz and A3 note at 220 Hz. They sound similar and their waveforms look similar. 
 
+---
+
 ## Related Work
 One related application is tuning software. Tuning software analyzes the waveforms of the sound. They sample the instrument over a window of time and perform a fourier transformation on the waveform to get a frequency amplitude function of the samples. Since there may be noise surrounding the note, the frequency amplitude plot won’t be just a single frequency. Instruments don’t produce a single frequency but a multitude of frequencies (aka harmonics). The fourier transformation is transformed again through the Harmonic Product Spectrum, which estimates the fundamental frequency (the peak with the lowest frequency) or the note itself. 
 
 Another application is called chordify.net. It finds the chords and the beats at which they occur at. They use deep learning for both beat recognition and chord recognition, where chords are defined by their fundamental pitch. They used spectrograms of songs labelled with chords to train their models.
+
+---
 
 ## Data Processing
 ### Data Metrics
@@ -33,8 +39,12 @@ We took a spectrogram of each sample. A spectrogram measures the strength of eac
 NSynth’s validation set was used directly for validation (12732 samples). 
 NSynth’s test set was used directly for testing (4293 samples).
 
+---
+
 ## Architecture
 The primary model accepts images of dimensions 3x224x224. The image is passed through alexnet.features for feature extraction, then passed through to fully-connected layers (fig X). It was trained on an initial batch size of 188, learning rate of 1e-5, and 18 epochs. We multiplied the batch size by 1.1 times for every epoch loop after epoch 5. This acts like a various learning rate where at the beginning we want noisy gradients to jump out of local minimums and at the end we want gradients to be more accurate so that we can converge to the minimum.
+
+---
 
 ## Baseline Model
 Choosing a reasonable baseline model is an important step in a machine learning problem. After we have done a lot of research on choosing the best and most suitable baseline model for our project and comparing the pros and cons of each doable baseline model. Our group shortlisted ANN,CNN and random forest classifier as baseline model choices. We decided to choose a random forest classifier as our final baseline model since it works well with a large amount of data and our project can be interpreted as a classification problem.
@@ -43,13 +53,19 @@ Choosing a reasonable baseline model is an important step in a machine learning 
 
 We have also created a CNN baseline model without optimization and parameters tuning. This model can only achieve an overall accuracy of 37.8% at its best. Therefore, our group concluded that a random forest classifier is suitable for our project since it uses an ensemble method  to construct multiple decision making trees.
 
+---
+
 ## Quantitative Result
 Our model achieves 92.4% training accuracy, 82.8% validation accuracy and 80.4% testing accuracy. The model took over 10 hours to train for 18 epochs, and google-colab kept disconnecting before the model was fully trained. Therefore, the team could not obtain the whole training curve for the model. However, the validation loss dropped to a minimum at epoch 18 while the accuracy was the highest, and thus the team decided to use the model that was trained for 18 epochs. Since the purpose of the model is to identify different pitches, the team balanced the data set in terms of pitch. However, we recognized that the data that we use varied in many areas which made the prediction much more challenging. For example, the data varied in instruments, it also varied in instrument families. For example, keyboards can be acoustic, electronic or synthetic. The data also varied in length. Some samples contain three second of silence and only one second of actual sound. Therefore, the team decided to try testing with some tolerance. The tolerance would be three pitches, which means the model predicted pitch 70 and the actual pitch is 67, we considered the model to be correct. It turned out the testing accuracy with tolerance increased significantly to 88.7% which shows that the model is predicting on the right track and the predictions are reasonable and logical. 
+
+---
 
 ## Qualitative Result
 Model performed worse on lower pitch notes. We believe that this is due to the overlapping of tones, as pitches become lower, the strings required to play them become thicker, and many overtones can become dominant in the sound and overwhelm the fundamental tone.
 
 Another result is that the model performed worse on certain instruments. This is due to the imbalance of the data set in terms of instrument and instrument family. For example, the training set contained only under 10000 flute samples while it contained over 60000 bass samples.
+
+---
 
 ## Evaluate Model on New Data
 ### Applying Model to real life samples
